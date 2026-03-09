@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TypeSprint – Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+
+  <body data-role="admin" class="no-select">
+    <div id="admin-login-screen" class="admin-login-overlay">
+      <div class="theme-toggle-wrap theme-toggle-login-wrap" title="Switch between dark and light mode">
+        <span class="theme-label theme-dark">Dark</span>
+        <button id="btn-theme-toggle-login" class="theme-toggle theme-toggle-login-btn" type="button" aria-label="Toggle dark or light theme">
+          <span id="theme-icon-login"></span>
+        </button>
+        <span class="theme-label theme-light">Light</span>
+      </div>
+      <div class="admin-login-card">
+        <div class="admin-login-header">
+          <h1 class="admin-login-title">TypeSprint</h1>
+          <p class="admin-login-subtitle">Admin</p>
+        </div>
+        <form class="admin-login-form" id="admin-login-form" novalidate>
+          <div class="admin-login-field">
+            <input id="admin-username" type="text" placeholder="Username" autocomplete="off" required />
+          </div>
+          <div class="admin-login-field">
+            <input id="admin-password" type="password" placeholder="Password" autocomplete="off" required />
+          </div>
+          <div id="admin-login-error" class="admin-login-error" style="display: none;">Invalid username or password</div>
+          <button type="submit" id="btn-admin-login" class="admin-login-submit">Sign in</button>
+        </form>
+      </div>
+    </div>
+    <div class="app-shell" id="admin-dashboard" style="display: none;">
+      <header class="branding">
+        <div class="branding-main">
+          <div class="brand-title">
+            TypeSprint:
+            <span class="brand-highlight">The Ultimate Typing Showdown</span>
+          </div>
+          <div class="brand-tagline">Fast fingers. Faster victory.</div>
+        </div>
+        <div class="header-right">
+          <div class="theme-toggle-wrap" title="Switch between dark and light mode">
+            <span class="theme-label theme-dark">Dark</span>
+            <button id="btn-theme-toggle" class="theme-toggle" type="button" aria-label="Toggle dark or light theme">
+              <span id="theme-icon"></span>
+            </button>
+            <span class="theme-label theme-light">Light</span>
+          </div>
+          <div class="badge-round" id="admin-round-badge">
+            <span class="badge-dot"></span>
+            <span id="admin-round-label">No round running</span>
+          </div>
+        </div>
+      </header>
+       
+      <main class="layout-main">
+        <section class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">Round Control</div>
+              <div class="panel-subtitle">
+                Start rounds, promote top performers, and manage the flow.
+              </div>
+            </div>
+            <div id="admin-status-pill" class="status-pill status-pill--idle">
+              <span class="status-dot"></span>
+              <span id="admin-status-text">Waiting to start</span>
+            </div>
+          </div>
+
+          <div class="field-row" style="margin-bottom: 8px">
+            <div class="field-group">
+              <label for="admin-round-select">Round</label>
+              <select id="admin-round-select">
+                <option value="0">Practice – 45s</option>
+                <option value="1">Round 1 – 150s (Easy)</option>
+                <option value="2">Round 2 – 120s (Medium)</option>
+                <option value="3">Final – 110s (Hard)</option>
+              </select>
+            </div>
+            <div class="field-group" style="align-self: flex-end">
+              <button id="btn-admin-start-round" class="btn-primary">
+                Start round
+              </button>
+            </div>
+          </div>
+
+          <div class="admin-controls">
+            <button id="btn-admin-reset" class="btn-danger">
+              Reset competition
+            </button>
+          </div>
+
+          <div style="margin-top: 14px" class="small muted">
+            <strong>Flow</strong>: Practice → Round 1 (top 15 auto-qualify) → Round 2 (top 5 auto-qualify) → Final. Qualification runs automatically when each round ends.
+          </div>
+
+          <div style="margin-top: 12px" class="field-row">
+            <div class="field-group">
+              <label>Active participants</label>
+              <div id="admin-active-count" class="panel-subtitle">
+                0 registered
+              </div>
+            </div>
+            <div class="field-group">
+              <label>Qualified participants</label>
+              <div id="admin-qualified-count" class="panel-subtitle">
+                0 qualified
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <aside class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">Export</div>
+              <div class="panel-subtitle">
+                Download results as CSV.
+              </div>
+            </div>
+          </div>
+
+          <div class="field-row" style="margin-bottom: 10px">
+            <button id="btn-export-csv" class="btn-secondary">
+              Download CSV (Excel)
+            </button>
+          </div>
+
+          <div style="margin-top: 14px" class="small muted">
+            Exports include name, college, accuracy, WPM, and round.
+          </div>
+        </aside>
+      </main>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">Live Leaderboard</div>
+            <div class="panel-subtitle">
+              Sorted by accuracy, then WPM, per round.
+            </div>
+          </div>
+        </div>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>College</th>
+                <th>Round</th>
+                <th>Acc</th>
+                <th>WPM</th>
+                <th>Chars</th>
+              </tr>
+            </thead>
+            <tbody id="leaderboard-body-admin">
+              <tr>
+                <td colspan="7" class="text-center small muted">
+                  Waiting for scores…
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">Participants & Qualification</div>
+            <div class="panel-subtitle">
+              View qualified list and eliminate manually if needed.
+            </div>
+          </div>
+        </div>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>College</th>
+                <th>Max Round</th>
+              </tr>
+            </thead>
+            <tbody id="participants-body-admin">
+              <tr>
+                <td colspan="3" class="text-center small muted">
+                  No participants yet.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>

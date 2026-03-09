@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TypeSprint – Player</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body data-role="player" class="no-select">
+    <div class="app-shell">
+      <header class="branding">
+        <div class="branding-main">
+          <div class="brand-title">
+            TypeSprint:
+            <span class="brand-highlight">The Ultimate Typing Showdown</span>
+          </div>
+          <div class="brand-tagline">Fast fingers. Faster victory.</div>
+        </div>
+        <div class="header-right">
+          <div class="theme-toggle-wrap" title="Switch between dark and light mode">
+            <span class="theme-label theme-dark">Dark</span>
+            <button id="btn-theme-toggle" class="theme-toggle" type="button" aria-label="Toggle dark or light theme">
+              <span id="theme-icon"></span>
+            </button>
+            <span class="theme-label theme-light">Light</span>
+          </div>
+          <div class="badge-round" id="player-current-round-badge">
+            <span class="badge-dot"></span>
+            <span id="player-round-label">Waiting for round…</span>
+          </div>
+        </div>
+      </header>
+
+      <main class="layout-main">
+        <section class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">Competitor Console</div>
+              <div class="panel-subtitle">
+                Register once, then wait for the countdown.
+              </div>
+            </div>
+            <div
+              id="player-status-pill"
+              class="status-pill status-pill--idle"
+            >
+              <span class="status-dot"></span>
+              <span id="player-status-text">Not registered</span>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field-group">
+              <label for="player-name">Participant name</label>
+              <input
+                id="player-name"
+                type="text"
+                maxlength="60"
+                autocomplete="off"
+                placeholder="Your full name"
+              />
+            </div>
+            <div class="field-group">
+              <label for="player-college">College</label>
+              <input
+                id="player-college"
+                type="text"
+                maxlength="80"
+                autocomplete="off"
+                placeholder="College name"
+              />
+            </div>
+            <div class="field-group" style="align-self: flex-end">
+              <button id="btn-register" class="btn-primary">
+                Register
+              </button>
+            </div>
+          </div>
+
+          <div class="meta-row">
+            <div>
+              <span class="muted small">Timer</span>
+              <div id="player-timer" class="timer-text">Waiting…</div>
+            </div>
+            <div class="text-right small muted">
+              Only qualified participants can type in later rounds.
+            </div>
+          </div>
+
+          <div id="typing-shell" class="typing-shell">
+            <div id="typing-countdown" class="countdown-overlay" style="display: none">
+              <div id="typing-countdown-number" class="countdown-number">3</div>
+            </div>
+            <div id="typing-paragraph" class="typing-paragraph">
+              Waiting for admin to start the first round.
+            </div>
+            <textarea
+              id="typing-input"
+              class="typing-input-hidden"
+              autocomplete="off"
+              autocorrect="off"
+              autocapitalize="off"
+              spellcheck="false"
+              disabled
+            ></textarea>
+          </div>
+
+          <div id="player-announcement" class="announcement"></div>
+          <div id="player-qualified-msg" class="qualified-message" style="display: none;"></div>
+          <div id="player-eliminated-msg" class="eliminated-message" style="display: none;"></div>
+        </section>
+
+        <aside class="panel leaderboard-sidebar">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">Live Leaderboard</div>
+              <div class="panel-subtitle">
+                Sorted by accuracy, then WPM.
+              </div>
+            </div>
+          </div>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Name</th>
+                  <th>College</th>
+                  <th>Acc</th>
+                  <th>WPM</th>
+                </tr>
+              </thead>
+              <tbody id="leaderboard-body-player">
+                <tr>
+                  <td colspan="5" class="text-center small muted">
+                    Waiting for scores…
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          
+
+          <div class="meta-row compact-footer">
+            <button id="btn-toggle-fullscreen" class="btn-ghost fullscreen-toggle">
+              Fullscreen
+            </button>
+            <span class="small muted">Copy/paste disabled for fairness</span>
+          </div>
+        </aside>
+       
+      </main>
+      <footer class="app-footer">
+        Developed by <strong>Shravankumar Patel</strong> (BVIMIT)
+      </footer>
+      
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
