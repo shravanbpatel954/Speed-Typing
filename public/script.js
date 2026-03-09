@@ -130,6 +130,7 @@
     let charSpans = [];
     let typedText = "";
     let caretEl = null;
+    let prevTypedLength = 0;
     let currentRoundId = null;
 
     // initialize fullscreen button label once DOM is ready
@@ -151,6 +152,7 @@
     function renderParagraphHighlighted() {
       elParagraph.innerHTML = "";
       charSpans = [];
+      prevTypedLength = 0;
       for (let i = 0; i < originalText.length; i++) {
         const span = document.createElement("span");
         const ch = originalText[i];
@@ -173,8 +175,14 @@
 
     function updateCharClasses() {
       const len = typedText.length;
-      for (let i = 0; i < charSpans.length; i++) {
+      const maxTouched = Math.min(
+        charSpans.length,
+        Math.max(len, prevTypedLength) + 1
+      );
+
+      for (let i = 0; i < maxTouched; i++) {
         const span = charSpans[i];
+        if (!span) continue;
         span.classList.remove("correct", "incorrect", "current");
         if (i < len) {
           if (typedText[i] === originalText[i]) {
@@ -187,30 +195,22 @@
         }
       }
 
-      // Position caret before the next character to type (Word-style)
-      if (caretEl) {
-        if (len >= charSpans.length) {
-          const lastSpan = charSpans[charSpans.length - 1];
-          if (lastSpan) {
-            const rect = lastSpan.getBoundingClientRect();
-            const hostRect = elParagraph.getBoundingClientRect();
-            caretEl.style.left = `${rect.right - hostRect.left}px`;
-            caretEl.style.top = `${rect.top - hostRect.top}px`;
-            caretEl.style.height = `${rect.height}px`;
-            caretEl.style.display = "block";
-          }
-        } else {
-          const targetSpan = charSpans[len];
-          if (targetSpan) {
-            const rect = targetSpan.getBoundingClientRect();
-            const hostRect = elParagraph.getBoundingClientRect();
-            caretEl.style.left = `${rect.left - hostRect.left}px`;
-            caretEl.style.top = `${rect.top - hostRect.top}px`;
-            caretEl.style.height = `${rect.height}px`;
-            caretEl.style.display = "block";
-          }
-        }
-      }
+      prevTypedLength = len;
+
+      // Position caret before the next character to type (Word-style), using minimal layout work
+      if (!caretEl || !charSpans.length) return;
+      const targetIndex = Math.min(len, charSpans.length - 1);
+      const targetSpan = charSpans[targetIndex];
+      if (!targetSpan) return;
+      const rect = targetSpan.getBoundingClientRect();
+      const hostRect = elParagraph.getBoundingClientRect();
+      const isEndOfText = len >= charSpans.length;
+      caretEl.style.left = `${
+        (isEndOfText ? rect.right : rect.left) - hostRect.left
+      }px`;
+      caretEl.style.top = `${rect.top - hostRect.top}px`;
+      caretEl.style.height = `${rect.height}px`;
+      caretEl.style.display = "block";
     }
 
     function resetRoundVisuals() {
