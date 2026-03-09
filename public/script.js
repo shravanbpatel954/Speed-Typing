@@ -242,11 +242,16 @@
         if (msLeft <= 0) {
           clearInterval(countdownTimeout);
           countdownTimeout = null;
-          elCountdownOverlay.style.display = "none";
-          beginTimer();
+          // Brief "Loading..." state so the screen never looks empty
+          elCountdownNumber.textContent = "Loading…";
+          setTimeout(() => {
+            elCountdownOverlay.style.display = "none";
+            beginTimer();
+          }, 500);
           return;
         }
         const secLeft = Math.ceil(msLeft / 1000);
+        // Show a simple 3..2..1..Go countdown
         if (secLeft > 3) {
           elCountdownNumber.textContent = "3";
         } else if (secLeft === 3) {

@@ -43,7 +43,8 @@ const Participant = mongoose.model("Participant", participantSchema);
 const Score = mongoose.model("Score", scoreSchema);
 
 // ----- Competition configuration -----
-const COUNTDOWN_MS = 3000; // 3 seconds before round starts (sync for all clients)
+// 3-second visible countdown (3..2..1) before typing starts.
+const COUNTDOWN_MS = 3000;
 
 // Updated round timings:
 // - Practice: 45 seconds
@@ -138,7 +139,7 @@ io.on("connection", (socket) => {
   const roundDef = currentRoundId != null ? ROUNDS.find((r) => r.id === currentRoundId) : null;
   let remainingSec = undefined;
   if (currentRoundId != null && roundStartAt != null && currentRoundTime != null) {
-    const elapsed = (Date.now() - roundStartAt) / 1000;
+    const elapsed = Math.max(0, (Date.now() - roundStartAt) / 1000);
     remainingSec = Math.max(0, Math.ceil(currentRoundTime - elapsed));
   }
   socket.emit("state:init", {
@@ -315,7 +316,7 @@ io.on("connection", (socket) => {
       if (currentRoundId !== roundIdNum) return;
       let elapsed = 0;
       const tick = () => {
-        elapsed = (Date.now() - roundStartAt) / 1000;
+        elapsed = Math.max(0, (Date.now() - roundStartAt) / 1000);
         const remaining = Math.max(0, Math.ceil(currentRoundTime - elapsed));
         io.emit("timerTick", { roundId: currentRoundId, remaining });
         if (remaining <= 0) {
