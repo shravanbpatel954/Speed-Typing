@@ -6,11 +6,7 @@ const mongoose = require("mongoose");
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server, {
-  pingInterval: 25000,
-  pingTimeout: 20000,
-  transports: ["websocket"],
-});
+const io = new Server(server);
 
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -47,9 +43,8 @@ const Participant = mongoose.model("Participant", participantSchema);
 const Score = mongoose.model("Score", scoreSchema);
 
 // ----- Competition configuration -----
-// 5-second visible countdown (3..2..1) before typing starts.
-// Slightly longer to give slower machines time to render.
-const COUNTDOWN_MS = 5000;
+// 3-second visible countdown (3..2..1) before typing starts.
+const COUNTDOWN_MS = 3000;
 
 // Updated round timings:
 // - Practice: 45 seconds
@@ -119,27 +114,6 @@ let qualificationTimeoutId = null;
 let timerTickIntervalId = null;
 const QUALIFY_BUFFER_SEC = 10; // extra seconds after round end before auto-qualify runs
 
-// Debounced leaderboard updates to avoid traffic spikes
-let leaderboardUpdateTimeout = null;
-function broadcastLeaderboard() {
-  if (leaderboardUpdateTimeout) return;
-  leaderboardUpdateTimeout = setTimeout(() => {
-    leaderboardUpdateTimeout = null;
-    const sorted = sortResults(currentResults);
-    io.emit("updateLeaderboard", {
-      roundId: currentRoundId,
-      results: sorted,
-    });
-  }, 500);
-}
-
-// Periodic server time broadcast for client clock sync
-setInterval(() => {
-  io.emit("serverTime", {
-    serverNow: Date.now(),
-  });
-}, 5000);
-
 // Sort by BEST first: accuracy (desc), then WPM (desc). Top of array = top performers.
 function sortResults(results) {
   return results.slice().sort((a, b) => {
@@ -160,11 +134,6 @@ function getCurrentRoundConfig() {
 // ----- Socket handlers -----
 io.on("connection", (socket) => {
   console.log("User connected", socket.id);
-
-  // Initial server time sync for this client
-  socket.emit("serverTime", {
-    serverNow: Date.now(),
-  });
 
   // Send initial state for late joiners / refreshes (include full round so participant sees trial round)
   const roundDef = currentRoundId != null ? ROUNDS.find((r) => r.id === currentRoundId) : null;
@@ -199,12 +168,12 @@ io.on("connection", (socket) => {
     }
 
     const key = name.trim().toLowerCase();
-    if (nameIndex.has(key)) {
-      const oldSocketId = nameIndex.get(key);
-      if (oldSocketId && oldSocketId !== socket.id) {
-        // Clean up any previous connection for this name (reconnect case)
-        participantsBySocket.delete(oldSocketId);
-      }
+    if (nameIndex.has(key) && nameIndex.get(key) !== socket.id) {
+      socket.emit("register:result", {
+        success: false,
+        message: "This name is already registered.",
+      });
+      return;
     }
 
     const participant = {
@@ -251,69 +220,66 @@ io.on("connection", (socket) => {
 
   // Player score submission (allowed for round 0 = Practice, 1, 2, 3) - registration mandatory
   socket.on("submitScore", (payload) => {
-    try {
-      const participant = participantsBySocket.get(socket.id);
-      if (
-        !participant ||
-        (currentRoundId !== 0 &&
-          currentRoundId !== 1 &&
-          currentRoundId !== 2 &&
-          currentRoundId !== 3)
-      )
-        return;
+    const participant = participantsBySocket.get(socket.id);
+    if (!participant || (currentRoundId !== 0 && currentRoundId !== 1 && currentRoundId !== 2 && currentRoundId !== 3)) return;
 
-      // Prevent multiple submissions per round
-      if (participant.hasSubmittedForRound[currentRoundId]) return;
+    // Prevent multiple submissions per round
+    if (participant.hasSubmittedForRound[currentRoundId]) return;
 
-      const { wpm, accuracy, correctChars, totalChars } = payload || {};
+    const {
+      wpm,
+      accuracy,
+      correctChars,
+      totalChars,
+    } = payload || {};
 
-      if (
-        typeof wpm !== "number" ||
-        typeof accuracy !== "number" ||
-        typeof correctChars !== "number" ||
-        typeof totalChars !== "number"
-      ) {
-        return;
-      }
-
-      const score = {
-        roundId: currentRoundId,
-        name: participant.name,
-        college: participant.college,
-        wpm,
-        accuracy,
-        correctChars,
-        totalChars,
-      };
-
-      participant.scores.push(score);
-      participant.hasSubmittedForRound[currentRoundId] = true;
-      currentResults.push(score);
-      allResults.push(score);
-
-      // Persist score in MongoDB (fire-and-forget)
-      const scoreDoc = new Score(score);
-      scoreDoc
-        .save()
-        .then(() => {
-          return Participant.findOneAndUpdate(
-            { name: participant.name },
-            {
-              $set: { qualifiedUntilRound: participant.qualifiedUntilRound },
-              $push: { scores: score },
-            },
-            { upsert: true }
-          );
-        })
-        .catch((err) => {
-          console.error("Error saving score to MongoDB", err);
-        });
-
-      // Debounced leaderboard broadcast
-      broadcastLeaderboard();
-    } catch (err) {
-      console.error("Score submission error:", err);
+    if (
+      typeof wpm !== "number" ||
+      typeof accuracy !== "number" ||
+      typeof correctChars !== "number" ||
+      typeof totalChars !== "number"
+    ) {
+      return;
     }
+
+    const score = {
+      roundId: currentRoundId,
+      name: participant.name,
+      college: participant.college,
+      wpm,
+      accuracy,
+      correctChars,
+      totalChars,
+    };
+
+    participant.scores.push(score);
+    participant.hasSubmittedForRound[currentRoundId] = true;
+    currentResults.push(score);
+    allResults.push(score);
+
+    // Persist score in MongoDB (fire-and-forget)
+    const scoreDoc = new Score(score);
+    scoreDoc
+      .save()
+      .then(() => {
+        return Participant.findOneAndUpdate(
+          { name: participant.name },
+          {
+            $set: { qualifiedUntilRound: participant.qualifiedUntilRound },
+            $push: { scores: score },
+          },
+          { upsert: true }
+        );
+      })
+      .catch((err) => {
+        console.error("Error saving score to MongoDB", err);
+      });
+
+    const sorted = sortResults(currentResults);
+    io.emit("updateLeaderboard", {
+      roundId: currentRoundId,
+      results: sorted,
+    });
   });
 
   // Admin: start round with a given roundId (0 = Practice, 1 = Round 1, 2 = Round 2, 3 = Final)
@@ -350,16 +316,9 @@ io.on("connection", (socket) => {
       if (currentRoundId !== roundIdNum) return;
       let elapsed = 0;
       const tick = () => {
-        elapsed = Math.max(
-          0,
-          Math.floor((Date.now() - roundStartAt) / 1000)
-        );
-        const remaining = Math.max(0, currentRoundTime - elapsed);
-        io.emit("timerTick", {
-          roundId: currentRoundId,
-          remaining,
-          serverTime: Date.now(),
-        });
+        elapsed = Math.max(0, (Date.now() - roundStartAt) / 1000);
+        const remaining = Math.max(0, Math.ceil(currentRoundTime - elapsed));
+        io.emit("timerTick", { roundId: currentRoundId, remaining });
         if (remaining <= 0) {
           if (timerTickIntervalId) {
             clearInterval(timerTickIntervalId);
