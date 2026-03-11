@@ -242,12 +242,9 @@
         if (msLeft <= 0) {
           clearInterval(countdownTimeout);
           countdownTimeout = null;
-          // Brief "Loading..." state so the screen never looks empty
-          elCountdownNumber.textContent = "Loading…";
-          setTimeout(() => {
-            elCountdownOverlay.style.display = "none";
-            beginTimer();
-          }, 500);
+          // Hide countdown and start typing exactly when the server timer starts
+          elCountdownOverlay.style.display = "none";
+          beginTimer();
           return;
         }
         const secLeft = Math.ceil(msLeft / 1000);
@@ -434,7 +431,10 @@
       elRoundLabel.textContent = data.label || "Round started";
       roundTime = data.time;
       totalTime = data.time;
-      const startAt = typeof data.startAt === "number" ? data.startAt : Date.now() + 3000;
+      // Use the server-provided startAt so that all players share the same start time.
+      // If for some reason it's missing, fall back to a local 3 second countdown.
+      const startAt =
+        typeof data.startAt === "number" ? data.startAt : Date.now() + 3000;
       setStatusPill("ready", "Get ready…");
       elAnnouncement.innerHTML = isPractice
         ? '<span class="announcement-strong">Practice round.</span> Get familiar with the software.'
