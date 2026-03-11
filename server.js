@@ -450,10 +450,19 @@ io.on("connection", (socket) => {
   // Admin: request latest results for export
   socket.on("admin:requestResults", () => {
     // Round-wise sorted results for exports:
-    // 1) by roundId ascending (Practice, Round 1, Round 2, Final),
+    // 1) by round in descending event importance:
+    //    Final (3) → Round 2 (2) → Round 1 (1) → Practice (0),
     // 2) within each round by best accuracy, then best WPM.
     const allResultsByRound = allResults.slice().sort((a, b) => {
-      if (a.roundId !== b.roundId) return a.roundId - b.roundId;
+      if (a.roundId !== b.roundId) {
+        const weight = (roundId) => {
+          if (roundId === 3) return 0; // Final
+          if (roundId === 2) return 1; // Round 2
+          if (roundId === 1) return 2; // Round 1
+          return 3; // Practice or any other
+        };
+        return weight(a.roundId) - weight(b.roundId);
+      }
       const accA = Number(a.accuracy);
       const accB = Number(b.accuracy);
       const wpmA = Number(a.wpm);
