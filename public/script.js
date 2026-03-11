@@ -1,6 +1,17 @@
 (() => {
   const socket = io();
 
+  // ---- Server time sync (for stable timers) ----
+  let serverTimeOffset = 0;
+  function getServerTime() {
+    return Date.now() + serverTimeOffset;
+  }
+
+  socket.on("serverTime", ({ serverNow }) => {
+    const clientNow = Date.now();
+    serverTimeOffset = serverNow - clientNow;
+  });
+
   const bodyRole = document.body.getAttribute("data-role");
 
   // Theme toggle (shared)
@@ -237,7 +248,7 @@
 
       elCountdownOverlay.style.display = "flex";
       const syncTick = () => {
-        const now = Date.now();
+        const now = getServerTime();
         const msLeft = startAt - now;
         if (msLeft <= 0) {
           clearInterval(countdownTimeout);
@@ -353,46 +364,17 @@
         const roundDef = (state.rounds || []).find((r) => r.id === sid);
         const label = state.currentRoundLabel || (roundDef && roundDef.label);
         if (label) elRoundLabel.textContent = label;
-        // If a round is running and we have paragraph + start time, show the round (fixes trial round not showing for participants)
-        if (state.currentParagraph && state.roundStartAt != null && state.currentRoundTime != null) {
-          const startAt = state.roundStartAt;
-          const now = Date.now();
-          const isPractice = sid === 0;
-          const canParticipate =
-            lockedIdentity &&
-            (isPractice || (eliminatedAfterRound === null && qualifiedUntilRound >= sid));
-          if (!lockedIdentity) {
-            setStatusPill("idle", "Register first to participate");
-            elAnnouncement.textContent = "You must register before you can participate in any round.";
-            elParagraph.textContent = "Please register with your name and college to participate.";
-          } else if (canParticipate) {
-            originalText = state.currentParagraph;
-            roundTime = state.currentRoundTime;
-            totalTime = state.currentRoundTime;
-            setStatusPill("ready", "Get ready…");
-            elAnnouncement.innerHTML = isPractice
-              ? '<span class="announcement-strong">Practice round.</span> Get familiar with the software.'
-              : '<span class="announcement-strong">Round in progress.</span> Join and type.';
-            if (elEliminatedMessage) elEliminatedMessage.style.display = "none";
-            resetRoundVisuals();
-            if (now < startAt) {
-              startCountdownAndTimer(state.currentRoundTime, startAt);
-            } else {
-              const remaining = typeof state.remainingSec === "number" ? state.remainingSec : 0;
-              if (remaining > 0) {
-                roundTime = remaining;
-                totalTime = state.currentRoundTime;
-                elTimer.textContent = formatTimer(roundTime);
-                setStatusPill("running", "Round in progress");
-                elInput.disabled = false;
-                elInput.focus();
-                // Timer updates come from server (timerTick) - no local setInterval
-              } else {
-                elTimer.textContent = "0";
-                setStatusPill("idle", "Round ended");
-              }
-            }
-          }
+        // If a round is already running when the player opens/refreses the page,
+        // just show a passive "round in progress" state.
+        if (state.currentParagraph && state.currentRoundTime != null) {
+          originalText = state.currentParagraph;
+          roundTime = state.currentRoundTime;
+          totalTime = state.currentRoundTime;
+          setStatusPill("running", "Round in progress");
+          elAnnouncement.textContent =
+            "A round is already in progress. You will be able to participate from the next round.";
+          elParagraph.textContent = originalText;
+          elInput.disabled = true;
         }
       }
       if (state.participants && lockedIdentity) {
@@ -434,7 +416,8 @@
       elRoundLabel.textContent = data.label || "Round started";
       roundTime = data.time;
       totalTime = data.time;
-      const startAt = typeof data.startAt === "number" ? data.startAt : Date.now() + 3000;
+      const startAt =
+        typeof data.startAt === "number" ? data.startAt : getServerTime() + 3000;
       setStatusPill("ready", "Get ready…");
       elAnnouncement.innerHTML = isPractice
         ? '<span class="announcement-strong">Practice round.</span> Get familiar with the software.'
@@ -473,7 +456,8 @@
       elRoundLabel.textContent = data.label || "Round started";
       roundTime = data.time;
       totalTime = data.time;
-      const startAt = typeof data.startAt === "number" ? data.startAt : Date.now() + 3000;
+      const startAt =
+        typeof data.startAt === "number" ? data.startAt : getServerTime() + 3000;
 
       const isRoundOne = rid === 1;
 
