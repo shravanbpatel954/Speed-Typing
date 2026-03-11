@@ -258,7 +258,6 @@
 
           elCountdownNumber.textContent = "Let’s Type!";
           animateCountdownText();
-          beginTimer(); // enable typing immediately
 
           // Fade out quickly (keeps UX smooth; avoids any "blank" feeling)
           elCountdownOverlay.classList.add("countdown-overlay--hide");
@@ -534,6 +533,13 @@
     socket.on("updateLeaderboard", (payload) => {
       if (!payload || !payload.results) return;
       renderLeaderboard(payload.results);
+    });
+
+    socket.on("roundTypingStart", (payload) => {
+      if (!payload || payload.roundId !== currentRoundId) return;
+      elCountdownOverlay.style.display = "none";
+      elCountdownOverlay.classList.remove("countdown-overlay--hide");
+      beginTimer();
     });
 
     socket.on("timerTick", (payload) => {

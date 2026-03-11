@@ -314,6 +314,8 @@ io.on("connection", (socket) => {
     // Start server-authoritative timer after countdown (fixes clock drift on remote clients)
     setTimeout(() => {
       if (currentRoundId !== roundIdNum) return;
+      // Emit exactly when typing starts - clients enable on this event, not local clock
+      io.emit("roundTypingStart", { roundId: currentRoundId });
       let elapsed = 0;
       const tick = () => {
         elapsed = Math.max(0, (Date.now() - roundStartAt) / 1000);
