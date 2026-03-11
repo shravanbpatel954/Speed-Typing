@@ -236,29 +236,52 @@
       elTimer.textContent = formatTimer(roundTime);
 
       elCountdownOverlay.style.display = "flex";
+      elCountdownOverlay.classList.remove("countdown-overlay--hide");
+
+      let countdownFinished = false;
+      const animateCountdownText = () => {
+        // restart CSS animation reliably (works even when text stays same)
+        elCountdownNumber.classList.remove("countdown-number--animate");
+        // force reflow
+        void elCountdownNumber.offsetWidth;
+        elCountdownNumber.classList.add("countdown-number--animate");
+      };
+
       const syncTick = () => {
         const now = Date.now();
         const msLeft = startAt - now;
         if (msLeft <= 0) {
           clearInterval(countdownTimeout);
           countdownTimeout = null;
-          // Hide countdown and start typing exactly when the server timer starts
-          elCountdownOverlay.style.display = "none";
-          beginTimer();
+          if (countdownFinished) return;
+          countdownFinished = true;
+
+          elCountdownNumber.textContent = "Let’s Type!";
+          animateCountdownText();
+          beginTimer(); // enable typing immediately
+
+          // Fade out quickly (keeps UX smooth; avoids any "blank" feeling)
+          elCountdownOverlay.classList.add("countdown-overlay--hide");
+          setTimeout(() => {
+            elCountdownOverlay.style.display = "none";
+            elCountdownOverlay.classList.remove("countdown-overlay--hide");
+          }, 260);
           return;
         }
         const secLeft = Math.ceil(msLeft / 1000);
         // Show a simple 3..2..1..Go countdown
-        if (secLeft > 3) {
+        if (secLeft >= 3) {
           elCountdownNumber.textContent = "3";
-        } else if (secLeft === 3) {
-          elCountdownNumber.textContent = "3";
+          animateCountdownText();
         } else if (secLeft === 2) {
           elCountdownNumber.textContent = "2";
+          animateCountdownText();
         } else if (secLeft === 1) {
           elCountdownNumber.textContent = "1";
+          animateCountdownText();
         } else {
-          elCountdownNumber.textContent = "Go!";
+          elCountdownNumber.textContent = "Let’s Type!";
+          animateCountdownText();
         }
       };
       syncTick();
@@ -680,10 +703,57 @@
       "participants-body-admin"
     );
     const elBtnExportCsv = document.getElementById("btn-export-csv");
+    const elAdminCountdownOverlay = document.getElementById("admin-countdown");
+    const elAdminCountdownNumber = document.getElementById("admin-countdown-number");
 
     let currentRoundId = null;
     let latestResultsPayload = null;
     let latestParticipants = [];
+    let adminCountdownInterval = null;
+
+    function startAdminCountdown(startAt) {
+      if (!elAdminCountdownOverlay || !elAdminCountdownNumber) return;
+      if (adminCountdownInterval) {
+        clearInterval(adminCountdownInterval);
+        adminCountdownInterval = null;
+      }
+      elAdminCountdownOverlay.style.display = "flex";
+      elAdminCountdownOverlay.classList.remove("countdown-overlay--hide");
+
+      const animate = () => {
+        elAdminCountdownNumber.classList.remove("countdown-number--animate");
+        void elAdminCountdownNumber.offsetWidth;
+        elAdminCountdownNumber.classList.add("countdown-number--animate");
+      };
+
+      let finished = false;
+      const tick = () => {
+        const msLeft = startAt - Date.now();
+        if (msLeft <= 0) {
+          if (finished) return;
+          finished = true;
+          elAdminCountdownNumber.textContent = "Let’s Type!";
+          animate();
+          elAdminCountdownOverlay.classList.add("countdown-overlay--hide");
+          setTimeout(() => {
+            elAdminCountdownOverlay.style.display = "none";
+            elAdminCountdownOverlay.classList.remove("countdown-overlay--hide");
+          }, 260);
+          clearInterval(adminCountdownInterval);
+          adminCountdownInterval = null;
+          return;
+        }
+        const secLeft = Math.ceil(msLeft / 1000);
+        if (secLeft >= 3) elAdminCountdownNumber.textContent = "3";
+        else if (secLeft === 2) elAdminCountdownNumber.textContent = "2";
+        else if (secLeft === 1) elAdminCountdownNumber.textContent = "1";
+        else elAdminCountdownNumber.textContent = "Let’s Type!";
+        animate();
+      };
+
+      tick();
+      adminCountdownInterval = setInterval(tick, 100);
+    }
 
     function setStatus(state, text) {
       elStatusPill.classList.remove(
@@ -755,6 +825,13 @@
         currentRoundId: payload.roundId,
         currentRoundResults: payload.results,
       };
+    });
+
+    // Show the same round-start countdown on admin
+    socket.on("roundStarted", (data) => {
+      const startAt = data && typeof data.startAt === "number" ? data.startAt : null;
+      if (!startAt) return;
+      startAdminCountdown(startAt);
     });
 
     socket.on("participants:update", (list) => {
