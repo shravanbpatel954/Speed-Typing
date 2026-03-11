@@ -703,57 +703,10 @@
       "participants-body-admin"
     );
     const elBtnExportCsv = document.getElementById("btn-export-csv");
-    const elAdminCountdownOverlay = document.getElementById("admin-countdown");
-    const elAdminCountdownNumber = document.getElementById("admin-countdown-number");
 
     let currentRoundId = null;
     let latestResultsPayload = null;
     let latestParticipants = [];
-    let adminCountdownInterval = null;
-
-    function startAdminCountdown(startAt) {
-      if (!elAdminCountdownOverlay || !elAdminCountdownNumber) return;
-      if (adminCountdownInterval) {
-        clearInterval(adminCountdownInterval);
-        adminCountdownInterval = null;
-      }
-      elAdminCountdownOverlay.style.display = "flex";
-      elAdminCountdownOverlay.classList.remove("countdown-overlay--hide");
-
-      const animate = () => {
-        elAdminCountdownNumber.classList.remove("countdown-number--animate");
-        void elAdminCountdownNumber.offsetWidth;
-        elAdminCountdownNumber.classList.add("countdown-number--animate");
-      };
-
-      let finished = false;
-      const tick = () => {
-        const msLeft = startAt - Date.now();
-        if (msLeft <= 0) {
-          if (finished) return;
-          finished = true;
-          elAdminCountdownNumber.textContent = "Let’s Type!";
-          animate();
-          elAdminCountdownOverlay.classList.add("countdown-overlay--hide");
-          setTimeout(() => {
-            elAdminCountdownOverlay.style.display = "none";
-            elAdminCountdownOverlay.classList.remove("countdown-overlay--hide");
-          }, 260);
-          clearInterval(adminCountdownInterval);
-          adminCountdownInterval = null;
-          return;
-        }
-        const secLeft = Math.ceil(msLeft / 1000);
-        if (secLeft >= 3) elAdminCountdownNumber.textContent = "3";
-        else if (secLeft === 2) elAdminCountdownNumber.textContent = "2";
-        else if (secLeft === 1) elAdminCountdownNumber.textContent = "1";
-        else elAdminCountdownNumber.textContent = "Let’s Type!";
-        animate();
-      };
-
-      tick();
-      adminCountdownInterval = setInterval(tick, 100);
-    }
 
     function setStatus(state, text) {
       elStatusPill.classList.remove(
@@ -825,13 +778,6 @@
         currentRoundId: payload.roundId,
         currentRoundResults: payload.results,
       };
-    });
-
-    // Show the same round-start countdown on admin
-    socket.on("roundStarted", (data) => {
-      const startAt = data && typeof data.startAt === "number" ? data.startAt : null;
-      if (!startAt) return;
-      startAdminCountdown(startAt);
     });
 
     socket.on("participants:update", (list) => {
