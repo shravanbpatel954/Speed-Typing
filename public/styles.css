@@ -503,9 +503,15 @@ body[data-role="player"] .typing-paragraph {
 }
 
 .typing-input-hidden {
-  position: absolute;
+  position: fixed;
+  left: -9999px;
+  top: -9999px;
+  width: 1px;
+  height: 1px;
   opacity: 0;
   pointer-events: none;
+  border: 0;
+  padding: 0;
 }
 
 .meta-row {

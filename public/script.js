@@ -133,6 +133,15 @@
     let prevTypedLength = 0;
     let currentRoundId = null;
 
+    function focusTypingInput() {
+      if (!elInput) return;
+      try {
+        elInput.focus({ preventScroll: true });
+      } catch {
+        elInput.focus();
+      }
+    }
+
     // initialize fullscreen button label once DOM is ready
     updateFullscreenButtonLabel(!!document.fullscreenElement);
 
@@ -291,7 +300,7 @@
       if (!roundTime) return;
       setStatusPill("running", "Round in progress");
       elInput.disabled = false;
-      elInput.focus();
+      focusTypingInput();
       // Timer is now driven by server ticks (timerTick) - no local setInterval to avoid clock drift on remote clients
     }
 
@@ -327,7 +336,7 @@
 
     elTypingShell.addEventListener("click", () => {
       if (!elInput.disabled) {
-        elInput.focus();
+        focusTypingInput();
       }
     });
 
@@ -404,7 +413,7 @@
                 elTimer.textContent = formatTimer(roundTime);
                 setStatusPill("running", "Round in progress");
                 elInput.disabled = false;
-                elInput.focus();
+                focusTypingInput();
                 // Timer updates come from server (timerTick) - no local setInterval
               } else {
                 elTimer.textContent = "0";
