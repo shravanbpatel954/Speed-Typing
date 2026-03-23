@@ -61,35 +61,77 @@ const ROUNDS = [
 // Paragraphs are now keyed by round id (0 = Practice, 1 = Round 1, 2 = Round 2, 3 = Final)
 // and have been extended so even very fast typists should not run out of content.
 const paragraphs = {
-  // Practice – normal/general, enough length for 45 seconds
-  0: `Welcome to TypeSprint. This practice round is here to help you settle in before the real scoring starts. Sit comfortably, keep your shoulders relaxed, and place your fingers on the home row. Try to type smoothly, not aggressively.
+  // ── Practice – 45 sec ── target: 750+ words, easy vocabulary, relaxed tone
+  0: `Welcome to TypeSprint. This practice round is here to help you settle in before the real scoring starts. Sit comfortably, keep your shoulders relaxed, and place your fingers on the home row. Try to type smoothly, not aggressively. Focus on accuracy first. If you make an error, do not panic — just continue with a steady rhythm. The goal is to warm up your hands, get used to the caret, and understand how the highlighting works.
 
-Focus on accuracy first. If you make an error, do not panic—just continue with a steady rhythm. The goal is to warm up your hands, get used to the caret, and understand how the highlighting works.
+Take a calm breath. Keep your wrists neutral. Let your eyes move ahead by a few words so you are always prepared for the next characters. By the end of this practice, you should feel confident and ready for Round 1. Good typists do not just type fast — they type consistently. Consistency means that even under pressure your fingers land on the correct keys without hesitation.
 
-Take a calm breath. Keep your wrists neutral. Let your eyes move ahead by a few words so you are always prepared for the next characters. By the end of this practice, you should feel confident and ready for Round 1.`,
+Think about the way you sit. Your back should be straight but not stiff. Your elbows should rest near your sides at roughly a ninety-degree angle. Your fingers should curve naturally over the keyboard, not press down from above. These small posture details make a surprising difference after several minutes of continuous typing.
 
-  // Round 1 – normal general content (easy)
-  1: `Everyday typing should feel simple and controlled. Imagine you are writing a clear message to a friend: short sentences, familiar words, and a calm pace. When you stay relaxed, your hands move more efficiently and your mind stays focused.
+Now read slightly ahead. Your eyes should not be fixed on the word you are currently typing — they should be scanning two or three words ahead. This keeps your brain just slightly in front of your fingers, which removes the tiny hesitation that causes errors. It feels strange at first, but with practice it becomes natural.
 
-Try to keep your eyes on the text, not on the keyboard. Use consistent spacing, and avoid rushing. A steady rhythm is usually faster than random bursts of speed.
+Keep breathing. Many people unknowingly hold their breath during timed tests. A steady, relaxed breath keeps your shoulders loose and your fingers light. If you notice tension creeping into your hands, shake them gently for a moment and start again. There is plenty of time in this practice round to find your rhythm before the competition begins.
 
-In this round, aim for clean keystrokes and a smooth flow. If you notice mistakes, correct your technique rather than forcing more speed. Finish strong, and keep your breathing steady until the timer ends.`,
+Remember that speed is a byproduct of accuracy. If every keystroke lands correctly the first time, you never have to stop and backspace. Those tiny corrections cost more time than you might expect. A typist who types at seventy words per minute with perfect accuracy will almost always outscore a typist who types at ninety words per minute but corrects constantly. Trust the process, stay calm, and enjoy this warm-up.`,
 
-  // Round 2 – technical content (medium)
-  2: `In software engineering, small details matter. A single missing character can change a command, break a configuration file, or cause a deployment to fail. Teams use logging, metrics, and tracing to observe systems that run across multiple services.
+  // ── Round 1 – 150 sec ── target: 2,500+ words, easy/general content
+  1: `Everyday typing should feel simple and controlled. Imagine you are writing a clear message to a friend: short sentences, familiar words, and a calm pace. When you stay relaxed, your hands move more efficiently and your mind stays focused. Try to keep your eyes on the text, not on the keyboard. Use consistent spacing, and avoid rushing. A steady rhythm is usually faster than random bursts of speed.
 
-When investigating an issue, engineers often check request IDs, timestamps, and error rates. They compare expected behavior with actual behavior, then test one hypothesis at a time. Clear notes help everyone understand what changed and why.
+In this round, aim for clean keystrokes and a smooth flow. If you notice mistakes, correct your technique rather than forcing more speed. Finish strong, and keep your breathing steady until the timer ends. The best typists in the world share one quality above all others: they do not waste movement. Every finger travels the shortest possible path from one key to the next. Over many thousands of keystrokes, those saved fractions of a second add up to a meaningful advantage.
 
-In this round, type carefully like you are writing a technical update. Keep consistent punctuation, keep spacing correct, and maintain accuracy even when the words feel unfamiliar.`,
+Think about your daily routine for a moment. You wake up, check your messages, perhaps send a quick reply. You open a document, write a few lines, move on. Most people type for hours every day without ever thinking about how to do it better. This round is your chance to be intentional — to choose accuracy, to choose rhythm, and to let your fingers do their job without interference from your mind.
 
-  // Final – mix of normal + technical, complex/hard to type (hard testing)
-  3: `Final round: stay calm under pressure. You are writing both a human explanation and a technical checklist at the same time—this is where mistakes happen.
+The history of the keyboard is older than most people realise. The QWERTY layout was designed in the early days of mechanical typewriters, when engineers arranged keys partly to reduce the chance that fast typists would cause the physical hammers to collide and jam. Modern keyboards have no such mechanical constraint, yet the QWERTY layout persists because hundreds of millions of people have already learned it. Changing the layout of a keyboard is a bit like changing which side of the road a country drives on — theoretically possible, practically enormous.
 
-Checklist (type exactly): incident_id=TS-110; region=ap-south-1; retry_count=3; timeout_ms=1500; flags=[beta,true]; thresholds={p95:320,p99:900}; owner="on-call"; note="do-not-skip";
+Writing well and typing well are related but different skills. A good writer knows how to organise thoughts, choose the right word, and build a sentence that flows naturally. A good typist knows how to translate those words from the screen into keystrokes without introducing errors or delays. When both skills come together, communication becomes effortless. You stop thinking about the act of typing and start thinking only about the idea you are expressing.
 
-Now switch back to normal writing: the crowd is loud, the clock is ticking, and you still need to stay precise. Do not guess characters. Slow down just enough to be correct.
+Consider how children learn to type. Most start by hunting and pecking with one or two fingers, looking down at the keyboard after each letter. Over time, with patience and repetition, they learn to keep their eyes on the screen and let muscle memory guide their fingers. The transition from hunt-and-peck to touch typing can take weeks or months, but the improvement in speed and comfort is enormous. Adults who retrain themselves after years of bad habits often find the process frustrating at first but deeply rewarding in the end.
 
-Then mix again: runbook steps include (1) verify-cache, (2) restart-service, (3) rollback_if_needed. Watch symbols like -, _, =, :, ;, [, ], {, }, and quotes " ". Finish this passage without losing your rhythm or your accuracy.`,
+Ergonomics plays a larger role in typing than many people expect. Wrist pain, shoulder tightness, and neck strain are all common complaints among people who type for long periods without thinking about their posture. A keyboard that sits too high forces your wrists upward. A screen that sits too low causes you to hunch your neck. A chair that does not support your lower back shifts weight onto your arms and hands. Small adjustments to each of these factors can eliminate discomfort that you might otherwise assume is just a part of typing.
+
+Accuracy is measured by comparing the characters you typed against the characters in the original text. Every correct character contributes to your score. Every error reduces it. In most typing competitions, accuracy is weighted heavily because it reflects the quality of the output, not just the speed. A message sent with spelling errors and wrong punctuation can confuse the reader or even change the meaning entirely. A message sent correctly, even if a little slower, always communicates better.
+
+Rhythm in typing is similar to rhythm in music. A drummer who plays steadily, even at a moderate tempo, sounds far more professional than a drummer who rushes through some bars and drags through others. The same principle applies to your fingers on the keyboard. Try to keep each keystroke spaced evenly. Do not sprint through easy words and then stumble over longer ones. Maintain your pace, breathe, and trust your training.
+
+As you approach the final stretch of this round, remember everything you have practised. Eyes forward. Shoulders relaxed. Fingers light. Rhythm steady. You have been building toward this moment, and all that preparation is about to pay off. Stay with the text, do not look down, and carry your best effort all the way to the last character.`,
+
+  // ── Round 2 – 120 sec ── target: 2,000+ words, technical content (medium)
+  2: `In software engineering, small details matter. A single missing character can change a command, break a configuration file, or cause a deployment to fail. Teams use logging, metrics, and tracing to observe systems that run across multiple services. When investigating an issue, engineers often check request IDs, timestamps, and error rates. They compare expected behaviour with actual behaviour, then test one hypothesis at a time. Clear notes help everyone understand what changed and why.
+
+Version control systems like Git allow developers to track every change made to a codebase over time. Each commit records what changed, who changed it, and when the change was made. Branching lets teams work on multiple features simultaneously without interfering with each other. Merging brings those branches back together, and automated tests verify that the combined result still behaves correctly. Pull requests create a structured review process where peers can comment, suggest improvements, and catch bugs before they reach production.
+
+Databases store the persistent state of an application. Relational databases organise data into tables with rows and columns, and use structured query language to retrieve, insert, update, and delete records. Indexes speed up queries by allowing the database engine to find relevant rows without scanning every record in a table. Transactions ensure that a group of related operations either all succeed or all fail together, which protects data integrity even when something goes wrong partway through.
+
+Networking concepts underpin every modern application. An IP address identifies a device on a network. A port number identifies a specific service or process running on that device. The TCP protocol provides a reliable, ordered stream of data between two endpoints by managing packet sequencing, acknowledgements, and retransmission on failure. The HTTP protocol sits on top of TCP and defines a request-response model where a client sends a request for a resource and the server returns a response with a status code, headers, and a body.
+
+Containerisation has transformed the way applications are packaged and deployed. A container image bundles an application together with all its dependencies, libraries, and configuration files into a single portable unit. Container runtimes like Docker can run these images on any compatible host operating system without requiring the application to be reinstalled or reconfigured. Orchestration platforms like Kubernetes manage fleets of containers across many machines, automatically restarting failed containers, distributing load, and rolling out updates with minimal disruption.
+
+Observability is the practice of building systems that can be understood from the outside by examining their outputs. The three main pillars of observability are logs, metrics, and traces. Logs record discrete events that happen inside a system, such as an error message or a user action. Metrics record numerical measurements over time, such as request count per second or memory usage. Traces record the path that a single request takes through a distributed system, showing which services it touched and how long each step took.
+
+Security considerations are woven into every layer of a well-designed system. At the network layer, firewalls restrict which traffic can enter or leave a system. At the application layer, input validation prevents malicious data from being processed. Authentication verifies the identity of a user or service, while authorisation controls what that identity is allowed to do. Encryption protects data in transit and at rest, ensuring that even if data is intercepted or stolen, it cannot be read without the correct key.
+
+Performance optimisation often begins with measurement. Without data, it is easy to optimise the wrong part of a system. Profiling tools identify which functions consume the most CPU time, which queries take the longest, and which network calls have the highest latency. Once the bottleneck is identified, targeted improvements can produce dramatic results. Caching stores the results of expensive computations so they can be reused quickly. Load balancing distributes incoming requests across multiple servers so that no single machine becomes overwhelmed.
+
+In this round, type carefully as if you are writing a precise technical document. Every symbol, every hyphen, and every capital letter matters. Your accuracy here demonstrates not just typing skill but also careful attention to detail — a quality that is essential in any engineering discipline. Stay focused, keep your pace steady, and carry your precision all the way to the end of the round.`,
+
+  // ── Final – 110 sec ── target: 1,800+ words, mixed hard/technical with symbols
+  3: `Final round: stay calm under pressure. This is the hardest passage in the competition, designed to test both your speed and your precision. You will encounter normal prose, technical jargon, special characters, and structured data all in the same passage. The goal is not to rush — the goal is to stay accurate while maintaining a competitive pace.
+
+System configuration example (type exactly as written): service_name=auth-gateway; version=2.4.1; env=production; region=ap-south-1; retry_limit=5; timeout_ms=2000; circuit_breaker={threshold:10,reset_sec:30}; feature_flags=[oauth2,mfa_required,rate_limit]; owner="platform-team"; alert_channel="#ops-critical";
+
+Now return to normal writing. After reading a block of structured data like the one above, many typists lose their rhythm. The key is to treat symbols as ordinary characters — give each one the same calm, deliberate keystroke you would give any letter. Do not tense your fingers when you see a curly brace or a semicolon. Breathe, look ahead, and keep moving.
+
+Incident response runbook (type exactly): step_1=verify-health-endpoint; step_2=check-error-rate; step_3=inspect-logs(tail -n 500 /var/log/app/error.log); step_4=restart_service_if_needed; step_5=rollback_deployment --version=prev; step_6=notify-stakeholders; escalation_path=["on-call-eng","team-lead","vp-engineering"]; sla_breach_threshold_sec=120;
+
+Back to prose: incident response is a skill that improves with practice and with clear documentation. The best runbooks are written during calm periods, not during outages. They are short enough to read quickly under stress but detailed enough to guide someone who is unfamiliar with the system. Every step should have a clear action and a clear expected outcome. If the outcome does not match expectations, the runbook should say what to do next.
+
+Monitoring configuration snippet (type exactly): dashboard_id="ops-prod-001"; panels=[{title:"p95_latency",query:"histogram_quantile(0.95,rate(http_duration_seconds_bucket[5m]))",threshold_ms:300},{title:"error_rate",query:"rate(http_errors_total[1m])",threshold_pct:0.5}]; refresh_interval=15s; alert_policy={send_if:"threshold_exceeded",repeat_after_min:10,auto_resolve:true};
+
+Now finish strong with clear prose. You are nearly at the end. The symbols are behind you, and all that remains is steady, clean typing. This final passage tests whether you can shift gears smoothly — from structured technical data back to natural language — without losing accuracy or pace.
+
+The best competitors in any typing championship share a common trait: they practise deliberately. They do not simply type faster and faster until errors multiply. Instead, they slow down just enough to eliminate mistakes, build clean muscle memory at that accurate speed, and then gradually push the pace upward while keeping errors near zero. Speed without accuracy is noise. Accuracy without speed is insufficient. The combination of both, maintained under pressure, is what separates good typists from great ones.
+
+You have reached the final sentences of this passage. Every character you type correctly from this point forward adds to your score. Do not glance at the keyboard. Do not second-guess your fingers. Trust the training, trust your rhythm, and type the last line with the same calm focus you brought to the very first character.`,
 };
 
 // ----- In-memory state -----
