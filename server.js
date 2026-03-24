@@ -62,17 +62,15 @@ const ROUNDS = [
 // and have been extended so even very fast typists should not run out of content.
 const paragraphs = {
   // ── Practice – 45 sec ── target: 750+ words, easy vocabulary, relaxed tone
-  0: `Welcome to TypeSprint. This practice round is here to help you settle in before the real scoring starts. Sit comfortably, keep your shoulders relaxed, and place your fingers on the home row. Try to type smoothly, not aggressively. Focus on accuracy first. If you make an error, do not panic — just continue with a steady rhythm. The goal is to warm up your hands, get used to the caret, and understand how the highlighting works.
+  0: `Welcome to TypeSprint. This practice round is here to help you settle in before the real scoring starts. 
+  
+  Sit comfortably, keep your shoulders relaxed, and place your fingers on the home row. Try to type smoothly, not aggressively. 
+  
+  Focus on accuracy first. If you make an error, do not panic — just continue with a steady rhythm. 
+  
+  The goal is to warm up your hands, get used to the caret, and understand how the highlighting works.
 
-Take a calm breath. Keep your wrists neutral. Let your eyes move ahead by a few words so you are always prepared for the next characters. By the end of this practice, you should feel confident and ready for Round 1. Good typists do not just type fast — they type consistently. Consistency means that even under pressure your fingers land on the correct keys without hesitation.
-
-Think about the way you sit. Your back should be straight but not stiff. Your elbows should rest near your sides at roughly a ninety-degree angle. Your fingers should curve naturally over the keyboard, not press down from above. These small posture details make a surprising difference after several minutes of continuous typing.
-
-Now read slightly ahead. Your eyes should not be fixed on the word you are currently typing — they should be scanning two or three words ahead. This keeps your brain just slightly in front of your fingers, which removes the tiny hesitation that causes errors. It feels strange at first, but with practice it becomes natural.
-
-Keep breathing. Many people unknowingly hold their breath during timed tests. A steady, relaxed breath keeps your shoulders loose and your fingers light. If you notice tension creeping into your hands, shake them gently for a moment and start again. There is plenty of time in this practice round to find your rhythm before the competition begins.
-
-Remember that speed is a byproduct of accuracy. If every keystroke lands correctly the first time, you never have to stop and backspace. Those tiny corrections cost more time than you might expect. A typist who types at seventy words per minute with perfect accuracy will almost always outscore a typist who types at ninety words per minute but corrects constantly. Trust the process, stay calm, and enjoy this warm-up.`,
+. If every keystroke lands correctly the first time, you never have to stop and backspace.`,
 
   // ── Round 1 – 150 sec ── target: 2,500+ words, easy/general content
   1: `Everyday typing should feel simple and controlled. Imagine you are writing a clear message to a friend: short sentences, familiar words, and a calm pace. When you stay relaxed, your hands move more efficiently and your mind stays focused. Try to keep your eyes on the text, not on the keyboard. Use consistent spacing, and avoid rushing. A steady rhythm is usually faster than random bursts of speed.
